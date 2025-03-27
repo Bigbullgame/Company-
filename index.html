@@ -61,7 +61,14 @@
             color: white;
         }
 
-        .header-logo { font-size: 24px; font-weight: bold; }
+        .header-logo { 
+            font-size: 24px; 
+            font-weight: bold; 
+            background: linear-gradient(135deg, #ffeb3b, #ff3b3b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
         .header-icon { font-size: 24px; cursor: pointer; }
 
         .login-container, .register-container {
@@ -70,20 +77,25 @@
             align-items: center;
             justify-content: center;
             height: calc(100vh - var(--header-height));
-            background: white;
             border-radius: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             padding: 20px;
             margin: 15px;
         }
 
+        .login-container { background: linear-gradient(135deg, #ff9800, #ffcc80); }
+        .register-container { background: linear-gradient(135deg, #4CAF50, #a5d6a7); }
+
         .login-container.active, .register-container.active { display: flex; }
 
         .login-title, .register-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #fff, #ffeb3b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .input-field {
@@ -95,6 +107,7 @@
             font-size: 16px;
             outline: none;
             transition: border-color 0.3s;
+            background: rgba(255, 255, 255, 0.9);
         }
 
         .input-field:focus { border-color: var(--primary-color); }
@@ -121,11 +134,11 @@
         .switch-option {
             margin-top: 15px;
             font-size: 14px;
-            color: #777;
+            color: #fff;
         }
 
         .switch-link {
-            color: var(--primary-color);
+            color: #ffeb3b;
             font-weight: bold;
             cursor: pointer;
             text-decoration: underline;
@@ -380,7 +393,7 @@
         </div>
 
         <div class="login-container active" id="login-container">
-            <div class="login-title">Login</div>
+            <div class="login-title">BIGBULL</div>
             <input type="text" class="input-field" id="login-mobile" placeholder="Mobile Number" maxlength="10">
             <input type="password" class="input-field" id="login-password" placeholder="Password">
             <button class="login-button" id="login-button">Login</button>
@@ -388,7 +401,7 @@
         </div>
 
         <div class="register-container" id="register-container">
-            <div class="register-title">Register</div>
+            <div class="register-title">BIGBULL</div>
             <input type="text" class="input-field" id="register-mobile" placeholder="Mobile Number" maxlength="10">
             <input type="password" class="input-field" id="register-password" placeholder="Password">
             <button class="register-button" id="register-button">Register</button>
@@ -466,7 +479,6 @@
     </div>
 
     <script>
-        let userBalance = 20;
         let currentUser = null;
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -478,17 +490,15 @@
             const loggedInUser = localStorage.getItem('bigBullLoggedInUser');
             if (loggedInUser) {
                 currentUser = JSON.parse(loggedInUser);
-                userBalance = currentUser.balance;
+                updateBalanceDisplay();
                 document.getElementById('user-id').textContent = currentUser.id;
                 showMainContent();
-                updateBalanceDisplay();
             } else {
                 showLogin();
             }
         }
 
         function initEventListeners() {
-            // Login/Register Switch
             document.getElementById('show-register').addEventListener('click', () => {
                 document.getElementById('login-container').classList.remove('active');
                 document.getElementById('register-container').classList.add('active');
@@ -498,7 +508,6 @@
                 document.getElementById('login-container').classList.add('active');
             });
 
-            // Login
             document.getElementById('login-button').addEventListener('click', () => {
                 const mobile = document.getElementById('login-mobile').value;
                 const password = document.getElementById('login-password').value;
@@ -512,12 +521,11 @@
                     if (userData) {
                         const user = JSON.parse(userData);
                         if (user.password === password) {
-                            currentUser = { mobile: mobile, id: user.id, balance: user.balance };
+                            currentUser = { mobile: mobile, id: user.id, balance: parseFloat(localStorage.getItem('bigBullBalance')) || 20 };
                             localStorage.setItem('bigBullLoggedInUser', JSON.stringify(currentUser));
-                            userBalance = user.balance;
+                            updateBalanceDisplay();
                             document.getElementById('user-id').textContent = user.id;
                             showMainContent();
-                            updateBalanceDisplay();
                         } else {
                             showCustomAlert('Error', 'Incorrect password.');
                         }
@@ -528,7 +536,6 @@
                 }, 1500);
             });
 
-            // Register
             document.getElementById('register-button').addEventListener('click', () => {
                 const mobile = document.getElementById('register-mobile').value;
                 const password = document.getElementById('register-password').value;
@@ -551,17 +558,16 @@
                         localStorage.setItem(`bigBullUser_${mobile}`, JSON.stringify(newUser));
                         currentUser = { mobile: mobile, id: userId, balance: 20 };
                         localStorage.setItem('bigBullLoggedInUser', JSON.stringify(currentUser));
-                        userBalance = 20;
+                        localStorage.setItem('bigBullBalance', '20');
+                        updateBalanceDisplay();
                         document.getElementById('user-id').textContent = userId;
                         showMainContent();
-                        updateBalanceDisplay();
                         showCustomAlert('Success', 'Registration successful! You can now log in.');
                     }
                     hideLoading();
                 }, 1500);
             });
 
-            // Main Content Listeners
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', function() {
                     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -622,8 +628,9 @@
         }
 
         function updateBalanceDisplay() {
-            document.getElementById('balance-amount').textContent = userBalance.toFixed(2);
-            document.getElementById('profile-balance-amount').textContent = userBalance.toFixed(2);
+            const balance = parseFloat(localStorage.getItem('bigBullBalance')) || 20;
+            document.getElementById('balance-amount').textContent = balance.toFixed(2);
+            document.getElementById('profile-balance-amount').textContent = balance.toFixed(2);
         }
 
         function saveUserData() {
@@ -632,10 +639,10 @@
                     mobile: currentUser.mobile,
                     id: currentUser.id,
                     password: JSON.parse(localStorage.getItem(`bigBullUser_${currentUser.mobile}`)).password,
-                    balance: userBalance
+                    balance: parseFloat(localStorage.getItem('bigBullBalance')) || 20
                 };
                 localStorage.setItem(`bigBullUser_${currentUser.mobile}`, JSON.stringify(userData));
-                localStorage.setItem('bigBullLoggedInUser', JSON.stringify({ mobile: currentUser.mobile, id: currentUser.id, balance: userBalance }));
+                localStorage.setItem('bigBullLoggedInUser', JSON.stringify({ mobile: currentUser.mobile, id: currentUser.id, balance: userData.balance }));
             }
         }
 
@@ -645,4 +652,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
