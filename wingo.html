@@ -61,7 +61,14 @@
             color: white;
         }
 
-        .header-logo { font-size: 24px; font-weight: bold; }
+        .header-logo { 
+            font-size: 24px; 
+            font-weight: bold; 
+            background: linear-gradient(135deg, #ffeb3b, #ff3b3b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
         .header-icon { font-size: 24px; cursor: pointer; }
 
         .balance-display {
@@ -679,7 +686,7 @@
         let currentPeriod = generateCurrentPeriod();
         let previousPeriod = generatePreviousPeriod(currentPeriod);
         let gameHistory = [];
-        let userBets = [];
+        let userBets = JSON.parse(localStorage.getItem('bigBullBetHistory')) || [];
         let isBettingDisabled = false;
         let userBalance = parseFloat(localStorage.getItem('bigBullBalance')) || 20;
         const BET_FEE_PERCENTAGE = 0.02;
@@ -688,6 +695,7 @@
             updateBalanceDisplay();
             initEventListeners();
             generateInitialGameHistory();
+            loadBetHistory();
             startGameLoop();
         });
 
@@ -758,9 +766,9 @@
             document.getElementById('deposit-button').addEventListener('click', () => showCustomAlert('Info', 'Please deposit from the main menu'));
             document.getElementById('withdraw-button').addEventListener('click', () => showCustomAlert('Info', 'Please withdraw from the main menu'));
 
-            // Handle back navigation
             window.addEventListener('beforeunload', () => {
                 localStorage.setItem('bigBullBalance', userBalance.toFixed(2));
+                localStorage.setItem('bigBullBetHistory', JSON.stringify(userBets.slice(0, 5)));
             });
         }
 
@@ -924,6 +932,7 @@
                     }
                     updateBalanceDisplay();
                     localStorage.setItem('bigBullBalance', userBalance.toFixed(2));
+                    saveBetHistory();
                 }
             });
             updateMyBetsDisplay();
@@ -949,6 +958,18 @@
                 `;
                 container.appendChild(row);
             });
+        }
+
+        function saveBetHistory() {
+            if (userBets.length > 5) {
+                userBets = userBets.slice(0, 5);
+            }
+            localStorage.setItem('bigBullBetHistory', JSON.stringify(userBets));
+        }
+
+        function loadBetHistory() {
+            userBets = JSON.parse(localStorage.getItem('bigBullBetHistory')) || [];
+            updateMyBetsDisplay();
         }
 
         function updateBetFeeDisplay() {
@@ -998,6 +1019,7 @@
             };
 
             userBets.unshift(bet);
+            saveBetHistory();
             updateMyBetsDisplay();
             showCustomAlert('Success', `Bet placed: ₹${totalAmount} on ${selectedBet.value}`);
             document.getElementById('bet-slip').style.display = 'none';
