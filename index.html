@@ -1,0 +1,2009 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>BigBull - MultiGame</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff3b3b;
+            --secondary-color: #ff5252;
+            --green-color: #4CAF50;
+            --purple-color: #9c27b0;
+            --red-color: #f44336;
+            --orange-color: #ff9800;
+            --blue-color: #2196f3;
+            --text-color: #ffffff;
+            --dark-text: #333333;
+            --light-bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --header-height: 70px;
+            --theme-gradient: linear-gradient(135deg, #9c27b0, #673ab7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            background: #f0f0f0;
+            color: var(--dark-text);
+            height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .app-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            height: 100vh;
+            background: #f0f0f0;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            height: var(--header-height);
+            background: var(--theme-gradient);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-logo { 
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffeb3b, #ff3b3b, #ff9800);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .header-icon { 
+            font-size: 28px; 
+            cursor: pointer; 
+            color: #fff;
+        }
+
+        .login-container, .register-container, .deposit-page, .withdraw-page, .support-page {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - var(--header-height));
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: 15px;
+            background: var(--theme-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before, .register-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ctext x='0' y='60' font-size='20' opacity='0.1'%3E💰%3C/text%3E%3Ctext x='20' y='30' font-size='15' opacity='0.1'%3E💵%3C/text%3E%3Ctext x='40' y='80' font-size='25' opacity='0.1'%3E💲%3C/text%3E%3Ctext x='60' y='50' font-size='18' opacity='0.1'%3E💸%3C/text%3E%3Ctext x='80' y='20' font-size='22' opacity='0.1'%3E🤑%3C/text%3E%3C/svg%3E");
+            background-repeat: repeat;
+            z-index: 0;
+        }
+
+        .login-content, .register-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .register-container { background: var(--theme-gradient); }
+        .deposit-page { background: var(--theme-gradient); }
+        .withdraw-page { background: var(--theme-gradient); }
+        .support-page { background: var(--theme-gradient); }
+
+        .login-container.active, .register-container.active, .deposit-page.active, .withdraw-page.active, .support-page.active { 
+            display: flex; 
+        }
+
+        .login-title, .register-title, .deposit-title, .withdraw-title, .support-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #fff, #ffeb3b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-field:focus { 
+            border-color: var(--primary-color); 
+            box-shadow: 0 0 5px rgba(255, 59, 59, 0.3);
+        }
+
+        .login-button, .register-button, .deposit-button, .withdraw-button, .support-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff3b3b, #ff5252);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-button:hover, .register-button:hover, .deposit-button:hover, .withdraw-button:hover, .support-button:hover {
+            background: linear-gradient(135deg, #ff5252, #ff6b6b);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .switch-option {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+        }
+
+        .switch-link {
+            color: #ffeb3b;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .balance-display {
+            padding: 15px 20px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px;
+            border-radius: 10px;
+            background: var(--theme-gradient);
+            color: white;
+        }
+
+        .balance-amount { 
+            font-weight: bold; 
+            font-size: 18px; 
+            color: white;
+        }
+
+        .balance-actions { 
+            display: flex; 
+            gap: 15px; 
+        }
+
+        .balance-action {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .balance-action.deposit { 
+            background: var(--green-color); 
+        }
+
+        .balance-action.withdraw { 
+            background: var(--orange-color); 
+        }
+
+        .balance-action:hover { 
+            background: var(--secondary-color); 
+            transform: translateY(-2px); 
+        }
+
+        .games-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 15px;
+            height: calc(100% - var(--header-height) - 80px - 60px);
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            height: 220px;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            position: relative;
+            transform: scale(1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            background: linear-gradient(45deg, #ff3b3b, #ff9800, #4CAF50, #2196f3, #9c27b0);
+            border-radius: 18px;
+            z-index: -1;
+            animation: borderAnimation 3s linear infinite;
+            opacity: 0;
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes borderAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .game-card:hover { 
+            transform: translateY(-5px) scale(1.02); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .game-image {
+            width: 100%;
+            height: 80%;
+            object-fit: cover;
+        }
+
+        .game-name {
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            background: var(--theme-gradient);
+            color: white;
+            flex-grow: 1;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            background: var(--theme-gradient);
+            z-index: 200;
+            padding: 5px 0;
+            height: 60px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .nav-icon { 
+            font-size: 24px; 
+            margin-bottom: 3px; 
+            color: rgba(255, 255, 255, 0.7); 
+        }
+
+        .nav-label { 
+            font-size: 12px; 
+            color: rgba(255, 255, 255, 0.7); 
+        }
+
+        .nav-item.active .nav-icon, .nav-item.active .nav-label { 
+            color: white; 
+        }
+
+        .profile-section, .activity-section { 
+            display: none; 
+            padding: 20px; 
+        }
+
+        .profile-header {
+            background: var(--theme-gradient);
+            padding: 20px;
+            color: white;
+            text-align: center;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .profile-picture {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 15px;
+            border: 5px solid rgba(255,255,255,0.9);
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            object-fit: cover;
+        }
+
+        .user-id { 
+            font-size: 20px; 
+            font-weight: bold; 
+            letter-spacing: 1px; 
+        }
+
+        .profile-content {
+            padding: 20px;
+            background: #fff;
+            border-radius: 20px;
+            margin-top: -20px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .profile-balance {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--theme-gradient);
+            border-radius: 15px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            color: white;
+        }
+
+        .profile-balance-amount { 
+            font-size: 24px; 
+            font-weight: bold; 
+            color: white; 
+        }
+
+        .profile-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .profile-action {
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .profile-action.deposit { 
+            background: var(--green-color); 
+        }
+
+        .profile-action.withdraw { 
+            background: var(--orange-color); 
+        }
+
+        .profile-action.support { 
+            background: var(--blue-color);
+            grid-column: span 2;
+            margin-top: 10px;
+        }
+
+        .profile-action:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+        }
+
+        .profile-button {
+            width: 100%;
+            padding: 12px;
+            background: var(--theme-gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .profile-button:hover { 
+            background: linear-gradient(135deg, #673ab7, #9c27b0); 
+            transform: translateY(-2px); 
+        }
+
+        .deposit-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .deposit-option {
+            padding: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .deposit-option:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .deposit-image-section { 
+            text-align: center; 
+            display: none; 
+            width: 100%;
+        }
+
+        .deposit-image { 
+            max-width: 100%; 
+            max-height: 300px;
+            margin-bottom: 15px; 
+            border-radius: 10px;
+            border: 2px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .deposit-image-section .input-field { 
+            margin-bottom: 25px; 
+        }
+
+        .withdraw-history {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            color: white;
+        }
+
+        .custom-alert {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 350px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            z-index: 3001;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .alert-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .alert-message { 
+            margin-bottom: 20px; 
+            font-size: 16px; 
+            color: #333; 
+        }
+
+        .alert-button {
+            padding: 10px 25px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .alert-button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .loading-text { 
+            color: white; 
+            font-size: 16px; 
+            font-weight: bold; 
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loading-bar::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            background: var(--primary-color);
+            animation: load 1.5s infinite ease-in-out;
+        }
+
+        @keyframes load { 
+            0% { left: -50%; } 
+            50% { left: 100%; } 
+            100% { left: -50%; } 
+        }
+
+        .about-section {
+            padding: 15px;
+            margin-top: 15px;
+            background: var(--theme-gradient);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            color: white;
+        }
+
+        .about-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .about-content {
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hindi-text {
+            background: #000;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .welcome-screen {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 4000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .welcome-image {
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 10px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .game-loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 5000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .game-loading-text { 
+            color: white; 
+            font-size: 20px; 
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .game-loading-bar-container {
+            width: 80%;
+            max-width: 300px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .game-loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff3b3b, #ff9800);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .daily-bonus-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ffeb3b, #ffc107);
+            color: #333;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .daily-bonus-button:not(.claimed):hover {
+            background: linear-gradient(135deg, #ffd740, #ffca28);
+            transform: translateY(-2px);
+        }
+
+        .daily-bonus-button.claimed {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .daily-bonus-button i {
+            margin-right: 10px;
+        }
+
+        .daily-bonus-notice {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #ffeb3b;
+            line-height: 1.5;
+        }
+
+        .gift-code-section {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .gift-code-header {
+            background: var(--theme-gradient);
+            padding: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .gift-code-header i {
+            margin-right: 10px;
+        }
+
+        .gift-code-content {
+            padding: 15px;
+        }
+
+        .gift-code-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .gift-code-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--theme-gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .gift-code-submit:hover {
+            background: linear-gradient(135deg, #673ab7, #9c27b0);
+        }
+
+        .gift-code-format-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #ffeb3b;
+            text-align: center;
+            display: none
+        }
+
+        .gift-code-status {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #ffeb3b;
+            text-align: center;
+        }
+
+        .promo-banners {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .promo-banner {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .promo-banner-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .promo-banner-title {
+            padding: 12px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+        }
+
+        .promo-title-blue { background: var(--theme-gradient); }
+        .promo-title-green { background: var(--theme-gradient); }
+        .promo-title-orange { background: var(--theme-gradient); }
+        .promo-title-purple { background: var(--theme-gradient); }
+        .promo-title-red { background: var(--theme-gradient); }
+        .promo-title-primary { background: var(--theme-gradient); }
+
+        .withdraw-time-notice {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #ffeb3b;
+            line-height: 1.5;
+        }
+
+        .withdraw-cooldown-notice {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #ffeb3b;
+            line-height: 1.5;
+        }
+
+        .deposit-required-notice {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #ffeb3b;
+            line-height: 1.5;
+        }
+
+        .payment-warning {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #ffeb3b;
+            line-height: 1.5;
+        }
+
+        .textarea-field {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        @media (max-width: 500px) {
+            .header-logo { font-size: 28px; }
+            .balance-amount { font-size: 16px; }
+            .balance-action { padding: 8px 15px; font-size: 12px; }
+            .game-card { height: 200px; }
+            .deposit-image {
+                max-height: 250px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .game-card { height: 180px; }
+            .games-container { grid-template-columns: 1fr; }
+            .deposit-image {
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app-container">
+        <div class="header">
+            <div class="header-logo">BIGBULL</div>
+            <div class="header-icon"><i class="fas fa-headset"></i></div>
+        </div>
+
+        <div class="login-container" id="login-container">
+            <div class="login-content">
+                <div class="login-title">BIGBULL</div>
+                <input type="text" class="input-field" id="login-mobile" placeholder="Mobile Number" maxlength="10">
+                <input type="password" class="input-field" id="login-password" placeholder="Password">
+                <button class="login-button" id="login-button">Login</button>
+                <div class="switch-option">Don't have an account? <span class="switch-link" id="show-register">Register</span></div>
+            </div>
+        </div>
+
+        <div class="register-container" id="register-container">
+            <div class="register-content">
+                <div class="register-title">BIGBULL</div>
+                <input type="text" class="input-field" id="register-name" placeholder="Full Name" required>
+                <input type="text" class="input-field" id="register-mobile" placeholder="Mobile Number" maxlength="10">
+                <input type="password" class="input-field" id="register-password" placeholder="Password">
+                <input type="text" class="input-field" id="referral-code" placeholder="Referral Code (Optional)">
+                <button class="register-button" id="register-button">Register</button>
+                <div class="switch-option">Already have an account? <span class="switch-link" id="show-login">Login</span></div>
+            </div>
+        </div>
+
+        <div class="main-content" id="main-content" style="display: none;">
+            <div class="balance-display">
+                <div class="balance-amount">Balance: ₹<span id="balance-amount">20.00</span></div>
+                <div class="balance-actions">
+                    <div class="balance-action deposit" id="deposit-button">Deposit</div>
+                    <div class="balance-action withdraw" id="withdraw-button">Withdraw</div>
+                </div>
+            </div>
+            
+            <div class="games-container" id="games-container">
+                <div class="game-card" id="wingo-game">
+                    <img src="wingo.png" alt="WinGo" class="game-image">
+                    <div class="game-name">Win Go</div>
+                </div>
+                <div class="game-card" id="aviator-game">
+                    <img src="avi.png" alt="Aviator" class="game-image">
+                    <div class="game-name">Aviator</div>
+                </div>
+                <div class="game-card" id="mines-game">
+                    <img src="mine.png" alt="Mines" class="game-image">
+                    <div class="game-name">Mines</div>
+                </div>
+                <div class="game-card" id="plinko-game">
+                    <img src="plinko.png" alt="Plinko" class="game-image">
+                    <div class="game-name">Plinko</div>
+                </div>
+            </div>
+
+            <div class="activity-section" id="activity-section">
+                <div id="deposit-required-notice" class="deposit-required-notice" style="display: none;">
+                    <span class="hindi-text">बोनस और गिफ्ट कोड का लाभ उठाने के लिए कृपया पहले डिपॉजिट करें।</span>
+                </div>
+                <div id="daily-bonus-notice" class="daily-bonus-notice">
+                    <span class="hindi-text">दैनिक 101 बोनस प्राप्त करने के लिए कृपया डिपॉजिट करें</span>
+                </div>
+                <button class="daily-bonus-button" id="daily-bonus-button">
+                    <i class="fas fa-calendar-day"></i>
+                    Claim 101 Daily Bonus
+                </button>
+                
+                <div class="gift-code-section">
+                    <div class="gift-code-header">
+                        <i class="fas fa-gift"></i>
+                        Gift Code
+                    </div>
+                    <div class="gift-code-content">
+                        <div class="gift-code-format-info">
+                            <strong>Today's Gift Code Format:</strong><br>
+                            <span id="gift-code-format"></span>
+                        </div>
+                        <div class="gift-code-status" id="gift-code-status">
+                            <span id="gift-code-claims-today">0</span>/2 Gift Codes Claimed Today
+                        </div>
+                        <input type="text" class="input-field gift-code-input" id="gift-code-input" placeholder="Enter gift code">
+                        <button class="gift-code-submit" id="gift-code-submit">Submit</button>
+                    </div>
+                </div>
+                
+                <div class="promo-banners">
+                    <div class="promo-banner">
+                        <img src="b1.png" alt="First Deposit Bonus" class="promo-banner-image">
+                        <div class="promo-banner-title promo-title-blue">First Deposit Bonus</div>
+                    </div>
+                    <div class="promo-banner">
+                        <img src="b2.png" alt="Daily Check-in Bonus" class="promo-banner-image">
+                        <div class="promo-banner-title promo-title-green">Daily Check-in Bonus</div>
+                    </div>
+                    <div class="promo-banner">
+                        <img src="b3.png" alt="Aviator Fly High & Win Big" class="promo-banner-image">
+                        <div class="promo-banner-title promo-title-orange">Aviator Fly High & Win Big</div>
+                    </div>
+                    <div class="promo-banner">
+                        <img src="b4.png" alt="Lucky 10 Days Of Interest" class="promo-banner-image">
+                        <div class="promo-banner-title promo-title-purple">Lucky 10 Days Of Interest</div>
+                    </div>
+                    <div class="promo-banner">
+                        <img src="b5.png" alt="Youtube Creative Video" class="promo-banner-image">
+                        <div class="promo-banner-title promo-title-red">Youtube Creative Video</div>
+                    </div>
+                    <div class="promo-banner">
+                        <img src="b6.png" alt="Mysterious Gift" class="promo-banner-image">
+                        <div class="promo-banner-title promo-title-primary">Mysterious Gift</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section" id="profile-section">
+                <div class="profile-header">
+                    <img id="profile-picture" class="profile-picture" alt="Profile">
+                    <div class="user-id" id="user-id">USER12345</div>
+                </div>
+                <div class="profile-content">
+                    <div class="profile-balance">
+                        <div class="profile-balance-amount">Balance: ₹<span id="profile-balance-amount">20.00</span></div>
+                    </div>
+                    <div class="profile-actions">
+                        <div class="profile-action deposit" id="profile-deposit-button">Deposit</div>
+                        <div class="profile-action withdraw" id="profile-withdraw-button">Withdraw</div>
+                        <div class="profile-action support" id="profile-support-button">Customer Support</div>
+                    </div>
+                    
+                    <div class="about-section">
+                        <div class="about-title">बिगबुल गेम्स के बारे में</div>
+                        <div class="about-content">
+                            <span class="hindi-text">एविएटर, विनगो, माइन्स और प्लिंको जैसे रोमांचक गेम्स का आनंद लें, निष्पक्ष गेमप्ले और तुरंत निकासी के साथ।</span><br>
+                            <span class="hindi-text">[सावधानी] जुआ खेलने में जोखिम शामिल है - जिम्मेदारी से खेलें, हम और हमारे एजेंट आपके नुकसान के लिए जिम्मेदार नहीं हैं (18+)।</span><br>
+                            <span class="hindi-text">[गोपनीयता नीति] आपका डेटा सुरक्षित है; हम इसका उपयोग केवल खाता प्रबंधन के लिए करते हैं और कभी भी गैरकानूनी रूप से साझा नहीं करते। बुद्धिमानी से खेलें और बड़ा जीतें!</span>
+                        </div>
+                    </div>
+                    <button class="profile-button" id="logout-button">Logout</button>
+                </div>
+            </div>
+            
+            <div class="bottom-nav">
+                <div class="nav-item active" data-section="game">
+                    <div class="nav-icon"><i class="fas fa-home"></i></div>
+                    <div class="nav-label">Home</div>
+                </div>
+                <div class="nav-item" data-section="activity">
+                    <div class="nav-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="nav-label">Activity</div>
+                </div>
+                <div class="nav-item" data-section="profile">
+                    <div class="nav-icon"><i class="fas fa-user"></i></div>
+                    <div class="nav-label">Profile</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="deposit-page" id="deposit-page">
+            <div class="deposit-title">Deposit Funds</div>
+            <div class="payment-warning" id="payment-warning">
+                <span class="hindi-text">भुगतान करते समय आपके जानने वाले किसी भी आदमी का नाम आ सकता है, तो कृपया घबराएं नहीं और पेमेंट कर दें। UTR डालते ही आपका पैसा गेम में आ जाएगा।</span>
+            </div>
+            <div class="deposit-buttons" id="deposit-buttons">
+                <button class="deposit-option" data-amount="120">₹120</button>
+                <button class="deposit-option" data-amount="200">₹200</button>
+                <button class="deposit-option" data-amount="300">₹300</button>
+                <button class="deposit-option" data-amount="400">₹400</button>
+                <button class="deposit-option" data-amount="500">₹500</button>
+                <button class="deposit-option" data-amount="800">₹800</button>
+            </div>
+            <div class="deposit-image-section" id="deposit-image-section">
+                <img id="deposit-image" class="deposit-image" alt="Deposit QR">
+                <div style="margin: 10px 0; color: white; font-weight: bold;">Scan QR to Pay</div>
+                <input type="text" class="input-field" id="deposit-utr" placeholder="Enter UTR (12+ digits)">
+                <button class="deposit-button" id="deposit-submit">Submit</button>
+            </div>
+            <button class="deposit-button back-button" id="deposit-back">Back</button>
+        </div>
+
+        <div class="withdraw-page" id="withdraw-page">
+            <div class="withdraw-title">Withdraw Funds</div>
+            <div class="withdraw-time-notice" id="withdraw-time-notice">
+                <span class="hindi-text">हमारे द्वारा दिए जाने वाले बोनस की वजह से हमारे सर्वर में दिक्कत है, इसलिए आप सिर्फ शाम 7 बजे से लेकर शाम 8 बजे तक ही पैसे निकाल पाएंगे। कृपया इस समय के दौरान ही अपना विड्रॉल रिक्वेस्ट भेजें।</span>
+            </div>
+            <div class="withdraw-cooldown-notice" id="withdraw-cooldown-notice" style="display: none;">
+                <span class="hindi-text">डिपॉजिट करने के बाद 24 घंटे तक आप पैसे नहीं निकाल सकते। कृपया प्रतीक्षा करें: <span id="cooldown-timer">00:00:00</span></span>
+            </div>
+            <input type="text" class="input-field" id="withdraw-name" placeholder="Name">
+            <input type="text" class="input-field" id="withdraw-account" placeholder="Bank Account Number">
+            <input type="text" class="input-field" id="withdraw-ifsc" placeholder="IFSC Code">
+            <input type="number" class="input-field" id="withdraw-amount" placeholder="Amount (Min ₹130)">
+            <button class="withdraw-button" id="withdraw-submit">Submit</button>
+            <div class="withdraw-history" id="withdraw-history"></div>
+            <button class="withdraw-button back-button" id="withdraw-back">Back</button>
+        </div>
+
+        <div class="support-page" id="support-page">
+            <div class="support-title">Customer Support</div>
+            <input type="text" class="input-field" id="support-subject" placeholder="Subject">
+            <textarea class="textarea-field" id="support-message" placeholder="Describe your problem in detail"></textarea>
+            <button class="support-button" id="support-submit">Submit</button>
+            <button class="support-button back-button" id="support-back">Back</button>
+        </div>
+
+        <div class="custom-alert" id="custom-alert">
+            <div class="alert-content">
+                <div class="alert-title" id="alert-title">Success</div>
+                <div class="alert-message" id="alert-message"></div>
+                <button class="alert-button" id="alert-button">OK</button>
+            </div>
+        </div>
+        <div class="loading-overlay" id="loading-overlay">
+            <div class="loading-text" id="loading-text">Loading...</div>
+            <div class="loading-bar"></div>
+        </div>
+        <div class="welcome-screen" id="welcome-screen">
+            <img src="123.jpg" class="welcome-image" alt="Welcome">
+        </div>
+        <div class="game-loading-overlay" id="game-loading-overlay">
+            <div class="game-loading-text" id="game-loading-text">Opening Game...</div>
+            <div class="game-loading-bar-container">
+                <div class="game-loading-bar" id="game-loading-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        const REG_BOT_API = '8089873363:AAE9UmxF93CLZEVFuAEgqu08X3Goj8ARFZg';
+        const REG_CHAT_ID = '-4782421787';
+        const WITHDRAW_BOT_API = '7799495376:AAG-qEQ_10oeHBLJ8nxMxXCf0dyf5y6Sdr8';
+        const WITHDRAW_CHAT_ID = '-1002550626684';
+        const DEPOSIT_BOT_API = '8082439279:AAEJlvX8zdUdQzuvCHOjqtZ5RtA-nr67aFE';
+        const DEPOSIT_CHAT_ID = '-4798134848';
+        const SUPPORT_BOT_API = '8082439279:AAEJlvX8zdUdQzuvCHOjqtZ5RtA-nr67aFE';
+        const SUPPORT_CHAT_ID = '-4798134848';
+        const WALLET_KEY = 'bigBullGlobalWallet';
+        const VALIDITY_PERIOD = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+        const WITHDRAW_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+        const profilePictures = [
+            "https://i.pravatar.cc/100?img=1",
+            "https://i.pravatar.cc/100?img=2",
+            "https://i.pravatar.cc/100?img=3",
+            "https://i.pravatar.cc/100?img=4",
+            "https://i.pravatar.cc/100?img=5",
+            "https://i.pravatar.cc/100?img=6",
+            "https://i.pravatar.cc/100?img=7",
+            "https://i.pravatar.cc/100?img=8"
+        ];
+        let cooldownInterval = null;
+
+        // Roman numeral conversion for gift codes
+        const romanNumerals = {
+            1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI', 7: 'VII', 8: 'VIII', 9: 'IX', 10: 'X',
+            11: 'XI', 12: 'XII', 13: 'XIII', 14: 'XIV', 15: 'XV', 16: 'XVI', 17: 'XVII', 18: 'XVIII', 19: 'XIX', 20: 'XX',
+            21: 'XXI', 22: 'XXII', 23: 'XXIII', 24: 'XXIV', 25: 'XXV', 26: 'XXVI', 27: 'XXVII', 28: 'XXVIII', 29: 'XXIX', 30: 'XXX',
+            31: 'XXXI', 32: 'XXXII', 33: 'XXXIII', 34: 'XXXIV', 35: 'XXXV', 36: 'XXXVI', 37: 'XXXVII', 38: 'XXXVIII', 39: 'XXXIX', 40: 'XL',
+            41: 'XLI', 42: 'XLII', 43: 'XLIII', 44: 'XLIV', 45: 'XLV', 46: 'XLVI', 47: 'XLVII', 48: 'XLVIII', 49: 'XLIX', 50: 'L',
+            51: 'LI', 52: 'LII', 53: 'LIII', 54: 'LIV', 55: 'LV', 56: 'LVI', 57: 'LVII', 58: 'LVIII', 59: 'LIX', 60: 'LX',
+            61: 'LXI', 62: 'LXII', 63: 'LXIII', 64: 'LXIV', 65: 'LXV', 66: 'LXVI', 67: 'LXVII', 68: 'LXVIII', 69: 'LXIX', 70: 'LXX',
+            71: 'LXXI', 72: 'LXXII', 73: 'LXXIII', 74: 'LXXIV', 75: 'LXXV', 76: 'LXXVI', 77: 'LXXVII', 78: 'LXXVIII', 79: 'LXXIX', 80: 'LXXX',
+            81: 'LXXXI', 82: 'LXXXII', 83: 'LXXXIII', 84: 'LXXXIV', 85: 'LXXXV', 86: 'LXXXVI', 87: 'LXXXVII', 88: 'LXXXVIII', 89: 'LXXXIX', 90: 'XC',
+            91: 'XCI', 92: 'XCII', 93: 'XCIII', 94: 'XCIV', 95: 'XCV', 96: 'XCVI', 97: 'XCVII', 98: 'XCVIII', 99: 'XCIX', 100: 'C'
+        };
+
+        // Gift code amounts and their roman numerals
+        const giftCodeAmounts = {
+            'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10,
+            'XI': 11, 'XII': 12, 'XIII': 13, 'XIV': 14, 'XV': 15, 'XVI': 16, 'XVII': 17, 'XVIII': 18, 'XIX': 19, 'XX': 20,
+            'XXI': 21, 'XXII': 22, 'XXIII': 23, 'XXIV': 24, 'XXV': 25, 'XXVI': 26, 'XXVII': 27, 'XXVIII': 28, 'XXIX': 29, 'XXX': 30,
+            'XXXI': 31, 'XXXII': 32, 'XXXIII': 33, 'XXXIV': 34, 'XXXV': 35, 'XXXVI': 36, 'XXXVII': 37, 'XXXVIII': 38, 'XXXIX': 39, 'XL': 40,
+            'XLI': 41, 'XLII': 42, 'XLIII': 43, 'XLIV': 44, 'XLV': 45, 'XLVI': 46, 'XLVII': 47, 'XLVIII': 48, 'XLIX': 49, 'L': 50,
+            'LI': 51, 'LII': 52, 'LIII': 53, 'LIV': 54, 'LV': 55, 'LVI': 56, 'LVII': 57, 'LVIII': 58, 'LIX': 59, 'LX': 60,
+            'LXI': 61, 'LXII': 62, 'LXIII': 63, 'LXIV': 64, 'LXV': 65, 'LXVI': 66, 'LXVII': 67, 'LXVIII': 68, 'LXIX': 69, 'LXX': 70,
+            'LXXI': 71, 'LXXII': 72, 'LXXIII': 73, 'LXXIV': 74, 'LXXV': 75, 'LXXVI': 76, 'LXXVII': 77, 'LXXVIII': 78, 'LXXIX': 79, 'LXXX': 80,
+            'LXXXI': 81, 'LXXXII': 82, 'LXXXIII': 83, 'LXXXIV': 84, 'LXXXV': 85, 'LXXXVI': 86, 'LXXXVII': 87, 'LXXXVIII': 88, 'LXXXIX': 89, 'XC': 90,
+            'XCI': 91, 'XCII': 92, 'XCIII': 93, 'XCIV': 94, 'XCV': 95, 'XCVI': 96, 'XCVII': 97, 'XCVIII': 98, 'XCIX': 99, 'C': 100
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            welcomeScreen.style.display = 'flex';
+            
+            setTimeout(() => {
+                welcomeScreen.style.opacity = '0';
+                setTimeout(() => {
+                    welcomeScreen.style.display = 'none';
+                    welcomeScreen.style.opacity = '1';
+                    checkLoginStatus();
+                }, 500);
+            }, 2000);
+
+            initEventListeners();
+            updateProfileDisplay();
+            setRandomProfilePicture();
+            updateGiftCodeFormat();
+            
+            window.addEventListener('storage', function(e) {
+                if (e.key === WALLET_KEY && currentUser) {
+                    updateBalanceDisplay();
+                }
+            });
+        });
+
+        function updateGiftCodeFormat() {
+            const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+            const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+            const today = new Date();
+            const day = days[today.getDay()];
+            const date = today.getDate().toString().padStart(2, '0');
+            const month = months[today.getMonth()];
+            const year = today.getFullYear();
+            
+            const formatExample = `${day}${date}${month}[amount]fxbgbl${year}`;
+            document.getElementById('gift-code-format').textContent = formatExample;
+        }
+
+        function updateGiftCodeStatus() {
+            if (!currentUser) return;
+            
+            const today = new Date().toDateString();
+            const claimsToday = getTodaysGiftCodeClaims();
+            document.getElementById('gift-code-claims-today').textContent = claimsToday;
+            
+            const submitButton = document.getElementById('gift-code-submit');
+            if (claimsToday >= 2) {
+                submitButton.disabled = true;
+                submitButton.style.opacity = '0.5';
+                submitButton.textContent = 'Daily Limit Reached';
+            } else {
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.textContent = 'Submit';
+            }
+        }
+
+        function getTodaysGiftCodeClaims() {
+            if (!currentUser) return 0;
+            
+            const today = new Date().toDateString();
+            const claimedCodes = JSON.parse(localStorage.getItem(`giftCodes_${currentUser.mobile}`) || '{}');
+            
+            return Object.keys(claimedCodes).filter(date => date === today).length;
+        }
+
+        function hasClaimedGiftCodeToday(giftCode) {
+            if (!currentUser) return false;
+            
+            const today = new Date().toDateString();
+            const claimedCodes = JSON.parse(localStorage.getItem(`giftCodes_${currentUser.mobile}`) || '{}');
+            
+            return claimedCodes[today] && claimedCodes[today].includes(giftCode);
+        }
+
+        function addClaimedGiftCode(giftCode) {
+            if (!currentUser) return;
+            
+            const today = new Date().toDateString();
+            const claimedCodes = JSON.parse(localStorage.getItem(`giftCodes_${currentUser.mobile}`) || '{}');
+            
+            if (!claimedCodes[today]) {
+                claimedCodes[today] = [];
+            }
+            
+            claimedCodes[today].push(giftCode);
+            localStorage.setItem(`giftCodes_${currentUser.mobile}`, JSON.stringify(claimedCodes));
+        }
+
+        function isUTRUsed(utr) {
+            const usedUTRs = JSON.parse(localStorage.getItem('usedUTRs') || '[]');
+            return usedUTRs.includes(utr);
+        }
+
+        function addUsedUTR(utr) {
+            const usedUTRs = JSON.parse(localStorage.getItem('usedUTRs') || '[]');
+            usedUTRs.push(utr);
+            localStorage.setItem('usedUTRs', JSON.stringify(usedUTRs));
+        }
+
+        function setRandomProfilePicture() {
+            const randomIndex = Math.floor(Math.random() * profilePictures.length);
+            document.getElementById('profile-picture').src = profilePictures[randomIndex];
+        }
+
+        function checkLoginStatus() {
+            const loggedInUser = localStorage.getItem('bigBullLoggedInUser');
+            if (loggedInUser) {
+                currentUser = JSON.parse(loggedInUser);
+                const userData = localStorage.getItem(`bigBullUser_${currentUser.mobile}`);
+                if (userData) {
+                    const storedUser = JSON.parse(userData);
+                    currentUser.balance = storedUser.balance;
+                    currentUser.lastDepositDate = storedUser.lastDepositDate;
+                    currentUser.lastBonusClaim = storedUser.lastBonusClaim;
+                    currentUser.lastGiftClaim = storedUser.lastGiftClaim;
+                    currentUser.lastDepositTime = storedUser.lastDepositTime;
+                    currentUser.lastWithdrawableTime = storedUser.lastWithdrawableTime;
+                }
+                
+                updateBalanceDisplay();
+                document.getElementById('user-id').textContent = currentUser.id;
+                showMainContent();
+                loadWithdrawHistory();
+                checkBonusEligibility();
+                updateGiftCodeStatus();
+            } else {
+                showLogin();
+            }
+        }
+
+        function initEventListeners() {
+            document.getElementById('show-register').addEventListener('click', () => {
+                document.getElementById('login-container').classList.remove('active');
+                document.getElementById('register-container').classList.add('active');
+            });
+            document.getElementById('show-login').addEventListener('click', () => {
+                document.getElementById('register-container').classList.remove('active');
+                document.getElementById('login-container').classList.add('active');
+            });
+
+            document.getElementById('login-button').addEventListener('click', () => {
+                const mobile = document.getElementById('login-mobile').value;
+                const password = document.getElementById('login-password').value;
+                if (mobile.length !== 10 || !/^\d+$/.test(mobile)) {
+                    showCustomAlert('Error', 'Please enter a valid 10-digit mobile number.');
+                    return;
+                }
+                showLoading('Logging in...');
+                setTimeout(() => {
+                    const userData = localStorage.getItem(`bigBullUser_${mobile}`);
+                    if (userData) {
+                        const user = JSON.parse(userData);
+                        if (user.password === password) {
+                            currentUser = { 
+                                mobile: mobile, 
+                                id: user.id, 
+                                name: user.name,
+                                balance: user.balance, 
+                                lastDepositDate: user.lastDepositDate || null,
+                                lastBonusClaim: user.lastBonusClaim || null,
+                                lastGiftClaim: user.lastGiftClaim || null,
+                                lastDepositTime: user.lastDepositTime || null,
+                                lastWithdrawableTime: user.lastWithdrawableTime || null
+                            };
+                            localStorage.setItem('bigBullLoggedInUser', JSON.stringify(currentUser));
+                            localStorage.setItem(WALLET_KEY, user.balance.toFixed(2));
+                            updateBalanceDisplay();
+                            document.getElementById('user-id').textContent = user.id;
+                            showMainContent();
+                            loadWithdrawHistory();
+                            updateProfileDisplay();
+                            checkBonusEligibility();
+                            updateGiftCodeStatus();
+                            setRandomProfilePicture();
+                            hideLoading();
+                        } else {
+                            hideLoading();
+                            showCustomAlert('Error', 'Incorrect password.');
+                        }
+                    } else {
+                        hideLoading();
+                        showCustomAlert('Error', 'User not found. Please register.');
+                    }
+                }, 1000);
+            });
+
+            document.getElementById('register-button').addEventListener('click', () => {
+                const name = document.getElementById('register-name').value.trim();
+                const mobile = document.getElementById('register-mobile').value;
+                const password = document.getElementById('register-password').value;
+                const referralCode = document.getElementById('referral-code').value;
+                if (!name) {
+                    showCustomAlert('Error', 'Please enter your full name.');
+                    return;
+                }
+                if (mobile.length !== 10 || !/^\d+$/.test(mobile)) {
+                    showCustomAlert('Error', 'Please enter a valid 10-digit mobile number.');
+                    return;
+                }
+                if (password.length < 6) {
+                    showCustomAlert('Error', 'Password must be at least 6 characters.');
+                    return;
+                }
+                showLoading('Registering...');
+                setTimeout(() => {
+                    const existingUser = localStorage.getItem(`bigBullUser_${mobile}`);
+                    if (existingUser) {
+                        hideLoading();
+                        showCustomAlert('Error', 'This mobile number is already registered.');
+                    } else {
+                        const userId = 'USER' + Math.floor(10000 + Math.random() * 90000);
+                        const newUser = { 
+                            mobile: mobile, 
+                            id: userId, 
+                            name: name,
+                            password: password, 
+                            balance: 20, 
+                            referralCode: referralCode || '', 
+                            lastDepositDate: null,
+                            lastBonusClaim: null,
+                            lastGiftClaim: null,
+                            lastDepositTime: null,
+                            lastWithdrawableTime: null
+                        };
+                        localStorage.setItem(`bigBullUser_${mobile}`, JSON.stringify(newUser));
+                        currentUser = { 
+                            mobile: mobile, 
+                            id: userId, 
+                            name: name,
+                            balance: 20, 
+                            lastDepositDate: null,
+                            lastBonusClaim: null,
+                            lastGiftClaim: null,
+                            lastDepositTime: null,
+                            lastWithdrawableTime: null
+                        };
+                        localStorage.setItem('bigBullLoggedInUser', JSON.stringify(currentUser));
+                        localStorage.setItem(WALLET_KEY, '20.00');
+                        updateBalanceDisplay();
+                        document.getElementById('user-id').textContent = userId;
+                        showMainContent();
+                        sendTelegramMessage(REG_BOT_API, REG_CHAT_ID, `New Registration\nID: ${userId}\nName: ${name}\nMobile: ${mobile}\nReferral: ${referralCode || 'None'}\nDate: ${new Date().toLocaleString()}`);
+                        hideLoading();
+                        showCustomAlert('Success', 'Registration successful! You can now log in.');
+                        updateProfileDisplay();
+                        checkBonusEligibility();
+                        updateGiftCodeStatus();
+                        setRandomProfilePicture();
+                    }
+                }, 1000);
+            });
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    const section = this.getAttribute('data-section');
+                    document.getElementById('games-container').style.display = section === 'game' ? 'grid' : 'none';
+                    document.getElementById('activity-section').style.display = section === 'activity' ? 'block' : 'none';
+                    document.getElementById('profile-section').style.display = section === 'profile' ? 'block' : 'none';
+                    
+                    if (section === 'activity') {
+                        updateGiftCodeStatus();
+                    }
+                });
+            });
+
+            document.getElementById('wingo-game').addEventListener('click', () => {
+                showGameLoading('Opening WinGo Game...', 'wingo.html');
+            });
+            document.getElementById('aviator-game').addEventListener('click', () => {
+                showGameLoading('Opening Aviator Game...', 'aviator.html');
+            });
+            document.getElementById('mines-game').addEventListener('click', () => {
+                showGameLoading('Opening Mines Game...', 'mines.html');
+            });
+            document.getElementById('plinko-game').addEventListener('click', () => {
+                showGameLoading('Opening Plinko Game...', 'plinko.html');
+            });
+
+            document.getElementById('deposit-button').addEventListener('click', showDepositPage);
+            document.getElementById('profile-deposit-button').addEventListener('click', showDepositPage);
+            document.getElementById('withdraw-button').addEventListener('click', showWithdrawPage);
+            document.getElementById('profile-withdraw-button').addEventListener('click', showWithdrawPage);
+            document.getElementById('profile-support-button').addEventListener('click', showSupportPage);
+
+            document.getElementById('deposit-back').addEventListener('click', showMainContent);
+            document.getElementById('withdraw-back').addEventListener('click', showMainContent);
+            document.getElementById('support-back').addEventListener('click', showMainContent);
+
+            document.querySelectorAll('.deposit-option').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const amount = btn.getAttribute('data-amount');
+                    document.getElementById('deposit-image').src = `${amount}.png`;
+                    document.getElementById('deposit-buttons').style.display = 'none';
+                    document.getElementById('deposit-image-section').style.display = 'block';
+                    localStorage.setItem('currentDepositAmount', amount);
+                });
+            });
+
+            document.getElementById('deposit-submit').addEventListener('click', submitDeposit);
+            document.getElementById('withdraw-submit').addEventListener('click', submitWithdraw);
+            document.getElementById('support-submit').addEventListener('click', submitSupport);
+
+            document.getElementById('logout-button').addEventListener('click', () => {
+                saveUserData();
+                localStorage.removeItem('bigBullLoggedInUser');
+                currentUser = null;
+                showLoading('Logging out...');
+                setTimeout(() => {
+                    hideLoading();
+                    showLogin();
+                }, 1000);
+            });
+
+            document.getElementById('alert-button').addEventListener('click', () => {
+                document.getElementById('custom-alert').style.display = 'none';
+            });
+            
+            document.getElementById('daily-bonus-button').addEventListener('click', claimDailyBonus);
+            document.getElementById('gift-code-submit').addEventListener('click', submitGiftCode);
+        }
+
+        function isBonusEligible() {
+            if (!currentUser || !currentUser.lastDepositDate) return false;
+            const now = new Date();
+            const lastDeposit = new Date(currentUser.lastDepositDate);
+            return (now - lastDeposit) <= VALIDITY_PERIOD;
+        }
+
+        function isToday(claimDate) {
+            const today = new Date().toDateString();
+            return claimDate && new Date(claimDate).toDateString() === today;
+        }
+
+        function checkBonusEligibility() {
+            if (!currentUser) return;
+
+            const bonusButton = document.getElementById('daily-bonus-button');
+            const depositNotice = document.getElementById('deposit-required-notice');
+            const bonusNotice = document.getElementById('daily-bonus-notice');
+            
+            if (!currentUser.lastDepositDate) {
+                bonusButton.classList.add('claimed');
+                bonusButton.innerHTML = '<i class="fas fa-lock"></i> पहले डिपॉजिट करें';
+                bonusButton.disabled = true;
+                depositNotice.style.display = 'block';
+                bonusNotice.style.display = 'block';
+            } else if (!isBonusEligible()) {
+                bonusButton.classList.add('claimed');
+                bonusButton.innerHTML = '<i class="fas fa-lock"></i> फिर से डिपॉजिट करें';
+                bonusButton.disabled = true;
+                depositNotice.style.display = 'block';
+                bonusNotice.style.display = 'block';
+            } else if (isToday(currentUser.lastBonusClaim)) {
+                bonusButton.classList.add('claimed');
+                bonusButton.innerHTML = '<i class="fas fa-calendar-check"></i> Daily Bonus Claimed';
+                bonusButton.disabled = true;
+                depositNotice.style.display = 'none';
+                bonusNotice.style.display = 'none';
+            } else {
+                bonusButton.classList.remove('claimed');
+                bonusButton.innerHTML = '<i class="fas fa-calendar-day"></i> Claim 101 Daily Bonus';
+                bonusButton.disabled = false;
+                depositNotice.style.display = 'none';
+                bonusNotice.style.display = 'none';
+            }
+        }
+
+        function claimDailyBonus() {
+            if (!currentUser) return;
+
+            if (!currentUser.lastDepositDate) {
+                showCustomAlert('Info', 'बोनस का लाभ उठाने के लिए कृपया पहले डिपॉजिट करें।');
+                return;
+            }
+
+            if (!isBonusEligible()) {
+                showCustomAlert('Info', '7 दिन की वैधता समाप्त हो गई है। कृपया फिर से डिपॉजिट करें।');
+                return;
+            }
+
+            if (isToday(currentUser.lastBonusClaim)) {
+                showCustomAlert('Info', 'आपने आज का बोनस पहले ही क्लेम कर लिया है!');
+                return;
+            }
+
+            showLoading('Claiming bonus...');
+            setTimeout(() => {
+                const newBalance = parseFloat(currentUser.balance) + 101;
+                currentUser.balance = newBalance;
+                currentUser.lastBonusClaim = new Date().toISOString();
+                currentUser.lastWithdrawableTime = new Date().getTime() + WITHDRAW_COOLDOWN;
+
+                localStorage.setItem(WALLET_KEY, newBalance.toFixed(2));
+                saveUserData();
+                updateBalanceDisplay();
+                checkBonusEligibility();
+                hideLoading();
+                showCustomAlert('Success', '101 bonus credits added to your account!');
+            }, 1500);
+        }
+
+        function submitGiftCode() {
+            if (!currentUser) return;
+
+            if (!currentUser.lastDepositDate) {
+                showCustomAlert('Info', 'गिफ्ट कोड का लाभ उठाने के लिए कृपया पहले डिपॉजिट करें।');
+                return;
+            }
+
+            if (!isBonusEligible()) {
+                showCustomAlert('Info', '7 दिन की वैधता समाप्त हो गई है। कृपया फिर से डिपॉजिट करें।');
+                return;
+            }
+
+            const claimsToday = getTodaysGiftCodeClaims();
+            if (claimsToday >= 2) {
+                showCustomAlert('Info', 'आपने आज की अधिकतम 2 गिफ्ट कोड सीमा पूरी कर ली है!');
+                return;
+            }
+
+            const giftCode = document.getElementById('gift-code-input').value.trim();
+            if (!giftCode) {
+                showCustomAlert('Error', 'Please enter a gift code.');
+                return;
+            }
+
+            if (hasClaimedGiftCodeToday(giftCode)) {
+                showCustomAlert('Info', 'आपने यह गिफ्ट कोड आज पहले ही क्लेम कर लिया है!');
+                return;
+            }
+
+            showLoading('Verifying gift code...');
+            setTimeout(() => {
+                const isValid = validateGiftCode(giftCode);
+                if (isValid.valid) {
+                    const newBalance = parseFloat(currentUser.balance) + isValid.amount;
+                    currentUser.balance = newBalance;
+                    currentUser.lastWithdrawableTime = new Date().getTime() + WITHDRAW_COOLDOWN;
+
+                    addClaimedGiftCode(giftCode);
+                    localStorage.setItem(WALLET_KEY, newBalance.toFixed(2));
+                    saveUserData();
+                    updateBalanceDisplay();
+                    updateGiftCodeStatus();
+                    hideLoading();
+                    showCustomAlert('Success', `${isValid.amount} credits added to your account!`);
+                    document.getElementById('gift-code-input').value = '';
+                } else {
+                    hideLoading();
+                    showCustomAlert('Error', 'Invalid gift code or not valid for today.');
+                }
+            }, 1500);
+        }
+
+        function validateGiftCode(giftCode) {
+            const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+            const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+            const today = new Date();
+            const day = days[today.getDay()];
+            const date = today.getDate().toString().padStart(2, '0');
+            const month = months[today.getMonth()];
+            const year = today.getFullYear();
+
+            // Expected format: dayDATEmonthAMOUNTfxbgblYEAR
+            const expectedPrefix = `${day}${date}${month}`;
+            const expectedSuffix = `fxbgbl${year}`;
+
+            if (!giftCode.toLowerCase().startsWith(expectedPrefix) || !giftCode.toLowerCase().endsWith(expectedSuffix)) {
+                return { valid: false, amount: 0 };
+            }
+
+            // Extract the amount part
+            const amountPart = giftCode.slice(expectedPrefix.length, giftCode.length - expectedSuffix.length).toUpperCase();
+            
+            if (giftCodeAmounts[amountPart]) {
+                return { valid: true, amount: giftCodeAmounts[amountPart] };
+            }
+
+            return { valid: false, amount: 0 };
+        }
+
+        function showGameLoading(text, redirectUrl) {
+            const loadingOverlay = document.getElementById('game-loading-overlay');
+            const loadingText = document.getElementById('game-loading-text');
+            const loadingBar = document.getElementById('game-loading-bar');
+            
+            loadingText.textContent = text;
+            loadingOverlay.style.display = 'flex';
+            loadingBar.style.width = '0%';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                loadingBar.style.width = `${progress}%`;
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        window.location.href = redirectUrl;
+                    }, 300);
+                }
+            }, 100);
+        }
+
+        function showLogin() {
+            document.getElementById('login-container').classList.add('active');
+            document.getElementById('register-container').classList.remove('active');
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('deposit-page').classList.remove('active');
+            document.getElementById('withdraw-page').classList.remove('active');
+            document.getElementById('support-page').classList.remove('active');
+            const lastMobile = localStorage.getItem('lastMobile');
+            if (lastMobile) document.getElementById('login-mobile').value = lastMobile;
+        }
+
+        function showMainContent() {
+            document.getElementById('login-container').classList.remove('active');
+            document.getElementById('register-container').classList.remove('active');
+            document.getElementById('main-content').style.display = 'block';
+            document.getElementById('deposit-page').classList.remove('active');
+            document.getElementById('withdraw-page').classList.remove('active');
+            document.getElementById('support-page').classList.remove('active');
+            updateBalanceDisplay();
+            updateProfileDisplay();
+            updateGiftCodeStatus();
+        }
+
+        function showDepositPage() {
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('deposit-page').classList.add('active');
+            document.getElementById('deposit-buttons').style.display = 'grid';
+            document.getElementById('deposit-image-section').style.display = 'none';
+            document.getElementById('deposit-utr').value = '';
+        }
+
+        function showWithdrawPage() {
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('withdraw-page').classList.add('active');
+            loadWithdrawHistory();
+            document.getElementById('withdraw-name').value = '';
+            document.getElementById('withdraw-account').value = '';
+            document.getElementById('withdraw-ifsc').value = '';
+            document.getElementById('withdraw-amount').value = '';
+            checkWithdrawTime();
+            checkWithdrawCooldown();
+        }
+
+        function showSupportPage() {
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('support-page').classList.add('active');
+            document.getElementById('support-subject').value = '';
+            document.getElementById('support-message').value = '';
+        }
+
+        function submitDeposit() {
+            const utr = document.getElementById('deposit-utr').value.trim();
+            if (utr.length < 12) {
+                showCustomAlert('Error', 'Please enter a valid UTR (12+ digits).');
+                return;
+            }
+            
+            if (!/^\d+$/.test(utr)) {
+                showCustomAlert('Error', 'UTR must contain only digits.');
+                return;
+            }
+
+            if (isUTRUsed(utr)) {
+                showCustomAlert('Error', 'This UTR has already been used. Please use a new UTR.');
+                return;
+            }
+            
+            const depositAmount = parseInt(localStorage.getItem('currentDepositAmount') || 0);
+            if (!depositAmount) {
+                showCustomAlert('Error', 'Invalid deposit amount.');
+                return;
+            }
+            
+            showLoading('Verifying UTR...');
+            setTimeout(() => {
+                currentUser.balance += depositAmount;
+                currentUser.lastDepositDate = new Date().toISOString();
+                currentUser.lastDepositTime = new Date().getTime();
+                
+                addUsedUTR(utr);
+                localStorage.setItem(WALLET_KEY, currentUser.balance.toFixed(2));
+                saveUserData();
+                updateBalanceDisplay();
+                
+                sendTelegramMessage(DEPOSIT_BOT_API, DEPOSIT_CHAT_ID, `Deposit\nUser: ${currentUser.id}\nName: ${currentUser.name}\nAmount: ₹${depositAmount}\nUTR: ${utr}\nDate: ${new Date().toLocaleString()}`);
+                
+                hideLoading();
+                showCustomAlert('Success', 'Deposit successful! You can now claim bonuses for 7 days.');
+                showMainContent();
+                checkBonusEligibility();
+                updateGiftCodeStatus();
+                
+                localStorage.removeItem('currentDepositAmount');
+            }, 2000);
+        }
+
+        function checkWithdrawTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const isWithdrawTime = hours >= 19 && hours < 20;
+            const withdrawSubmitBtn = document.getElementById('withdraw-submit');
+            
+            if (!isWithdrawTime) {
+                withdrawSubmitBtn.disabled = true;
+                withdrawSubmitBtn.style.opacity = '0.5';
+                withdrawSubmitBtn.style.cursor = 'not-allowed';
+                document.getElementById('withdraw-time-notice').style.display = 'block';
+            } else {
+                document.getElementById('withdraw-time-notice').style.display = 'none';
+                checkWithdrawCooldown();
+            }
+        }
+
+        function checkWithdrawCooldown() {
+            if (!currentUser || !currentUser.lastWithdrawableTime) {
+                return;
+            }
+
+            const now = new Date().getTime();
+            const cooldownEnds = currentUser.lastWithdrawableTime;
+            const timeRemaining = cooldownEnds - now;
+            
+            const withdrawSubmitBtn = document.getElementById('withdraw-submit');
+            const cooldownNotice = document.getElementById('withdraw-cooldown-notice');
+            
+            if (timeRemaining > 0) {
+                withdrawSubmitBtn.disabled = true;
+                withdrawSubmitBtn.style.opacity = '0.5';
+                withdrawSubmitBtn.style.cursor = 'not-allowed';
+                cooldownNotice.style.display = 'block';
+                
+                if (cooldownInterval) {
+                    clearInterval(cooldownInterval);
+                }
+                
+                updateCooldownTimer(timeRemaining);
+                cooldownInterval = setInterval(() => {
+                    const newTimeRemaining = cooldownEnds - new Date().getTime();
+                    if (newTimeRemaining <= 0) {
+                        clearInterval(cooldownInterval);
+                        cooldownNotice.style.display = 'none';
+                        checkWithdrawTime();
+                    } else {
+                        updateCooldownTimer(newTimeRemaining);
+                    }
+                }, 1000);
+            } else {
+                cooldownNotice.style.display = 'none';
+                checkWithdrawTime();
+            }
+        }
+
+        function updateCooldownTimer(timeRemaining) {
+            const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+            
+            const formattedTime = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('cooldown-timer').textContent = formattedTime;
+        }
+
+        function submitWithdraw() {
+            const name = document.getElementById('withdraw-name').value;
+            const account = document.getElementById('withdraw-account').value;
+            const ifsc = document.getElementById('withdraw-ifsc').value;
+            const amount = parseFloat(document.getElementById('withdraw-amount').value);
+
+            if (!name || !account || !ifsc || !amount) {
+                showCustomAlert('Error', 'Please fill all fields.');
+                return;
+            }
+            if (amount < 130) {
+                showCustomAlert('Error', 'Minimum withdrawal amount is ₹130.');
+                return;
+            }
+            if (amount > currentUser.balance) {
+                showCustomAlert('Error', 'Insufficient balance.');
+                return;
+            }
+
+            const now = new Date();
+            const hours = now.getHours();
+            if (hours < 19 || hours >= 20) {
+                showCustomAlert('Error', 'Withdrawals are only allowed between 7 PM and 8 PM.');
+                return;
+            }
+
+            if (currentUser.lastWithdrawableTime && now.getTime() < currentUser.lastWithdrawableTime) {
+                showCustomAlert('Error', 'You cannot withdraw within 24 hours of receiving bonus/gift credits.');
+                return;
+            }
+
+            showLoading('Processing withdrawal...');
+            setTimeout(() => {
+                currentUser.balance -= amount;
+                localStorage.setItem(WALLET_KEY, currentUser.balance.toFixed(2));
+                saveUserData();
+                updateBalanceDisplay();
+
+                const withdrawMessage = `Withdrawal Request\nUser: ${currentUser.id}\nName: ${name}\nAccount: ${account}\nIFSC: ${ifsc}\nAmount: ₹${amount}\nDate: ${new Date().toLocaleString()}`;
+                sendTelegramMessage(WITHDRAW_BOT_API, WITHDRAW_CHAT_ID, withdrawMessage);
+
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `<span>₹${amount}</span><span>${new Date().toLocaleString()}</span>`;
+                document.getElementById('withdraw-history').prepend(historyItem);
+
+                hideLoading();
+                showCustomAlert('Success', 'Withdrawal request submitted successfully!');
+                showMainContent();
+            }, 2000);
+        }
+
+        function submitSupport() {
+            const subject = document.getElementById('support-subject').value;
+            const message = document.getElementById('support-message').value;
+
+            if (!subject || !message) {
+                showCustomAlert('Error', 'Please fill all fields.');
+                return;
+            }
+
+            showLoading('Submitting support request...');
+            setTimeout(() => {
+                const supportMessage = `Customer Support Request\nUser: ${currentUser.id}\nName: ${currentUser.name}\nMobile: ${currentUser.mobile}\nSubject: ${subject}\nMessage: ${message}\nDate: ${new Date().toLocaleString()}`;
+                sendTelegramMessage(SUPPORT_BOT_API, SUPPORT_CHAT_ID, supportMessage);
+
+                hideLoading();
+                showCustomAlert('Success', 'Your support request has been submitted. We will contact you soon.');
+                showMainContent();
+            }, 1500);
+        }
+
+        function loadWithdrawHistory() {
+            document.getElementById('withdraw-history').innerHTML = '';
+        }
+
+        function updateBalanceDisplay() {
+            if (currentUser) {
+                document.getElementById('balance-amount').textContent = currentUser.balance.toFixed(2);
+                document.getElementById('profile-balance-amount').textContent = currentUser.balance.toFixed(2);
+            }
+        }
+
+        function updateProfileDisplay() {
+            if (currentUser) {
+                document.getElementById('user-id').textContent = currentUser.id;
+            }
+        }
+
+        function saveUserData() {
+            if (currentUser) {
+                const userData = {
+                    mobile: currentUser.mobile,
+                    id: currentUser.id,
+                    name: currentUser.name,
+                    password: localStorage.getItem(`bigBullUser_${currentUser.mobile}`) ? JSON.parse(localStorage.getItem(`bigBullUser_${currentUser.mobile}`)).password : '',
+                    balance: currentUser.balance,
+                    lastDepositDate: currentUser.lastDepositDate,
+                    lastBonusClaim: currentUser.lastBonusClaim,
+                    lastGiftClaim: currentUser.lastGiftClaim,
+                    lastDepositTime: currentUser.lastDepositTime,
+                    lastWithdrawableTime: currentUser.lastWithdrawableTime
+                };
+                localStorage.setItem(`bigBullUser_${currentUser.mobile}`, JSON.stringify(userData));
+            }
+        }
+
+        function showCustomAlert(title, message) {
+            document.getElementById('alert-title').textContent = title;
+            document.getElementById('alert-message').textContent = message;
+            document.getElementById('custom-alert').style.display = 'block';
+        }
+
+        function showLoading(text) {
+            document.getElementById('loading-text').textContent = text;
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+
+        function sendTelegramMessage(botApi, chatId, message) {
+            const url = `https://api.telegram.org/bot${botApi}/sendMessage`;
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                })
+            }).catch(error => console.error('Telegram message failed:', error));
+        }
+    </script>
+</body>
+</html>
